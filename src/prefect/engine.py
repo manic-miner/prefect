@@ -1724,6 +1724,8 @@ async def resolve_inputs(
     Raises:
         UpstreamTaskError: If any of the upstream states are not `COMPLETED`
     """
+    if not parameters:
+        return parameters
 
     def resolve_input(expr, context):
         state = None
@@ -1758,7 +1760,7 @@ async def resolve_inputs(
         return state.result(raise_on_failure=False, fetch=True) if return_data else None
 
     resolved_parameters = {}
-    for parameter, value in tuple(parameters.items()):
+    for parameter, value in parameters.items():
         try:
             resolved_parameters[parameter] = await run_sync_in_worker_thread(
                 visit_collection,
